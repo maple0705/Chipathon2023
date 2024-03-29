@@ -1,5 +1,5 @@
 IEEE SSCS Open-Source Ecosystem Chipathon 2023  
-a member of Japan Team  
+a member of Team Japan  
   
 Chipathonについて:  
 https://ishi-kai.org/categories.html#h-Chipathon  

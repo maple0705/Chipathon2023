@@ -1,3 +1,9 @@
+IEEE SSCS Open-Source Ecosystem Chipathon 2023  
+a member of Japan Team  
+  
+Chipathonについて:  
+https://ishi-kai.org/categories.html#h-Chipathon  
+
 # DP
   sim.で取得した Design Parameter  
   今は3.3V Tr.のDCOpのみ。

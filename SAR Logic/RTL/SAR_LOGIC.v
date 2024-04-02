@@ -31,7 +31,7 @@ module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST, VDD, VSS)
     always @(posedge CLK or negedge XRST) begin
         if( XRST == `LOW ) begin
             state <= 0;
-        end else if( state == 3'b6 ) begin
+        end else if( state == 3'd6 ) begin
             state <= 1;
         end else begin
             state <= state + 1;
@@ -42,7 +42,7 @@ module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST, VDD, VSS)
     always @(posedge CLK or negedge XRST) begin
         if( XRST == `LOW ) begin
             ADCount <= 0;
-        end else if( state == 3'b6 ) begin
+        end else if( state == 3'd6 ) begin
             if ( ADCount == `BIT_ADC - 1 ) begin
                 ADCount <= 0;
             end else begin
@@ -58,26 +58,26 @@ module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST, VDD, VSS)
             COMP_CLK <= `LOW;
             SC <= `HIGH;
             SDAC <= `LOW;
-            SDAC_NEXT <= 1 << `BIT_ADC  // only MSB is HIGH, meaning Vinn = Vref / 2
-        end else if( state == 3`b001) begin
+            SDAC_NEXT <= 1 << `BIT_ADC;  // only MSB is HIGH, meaning Vinn = Vref / 2
+        end else if( state == 3'd1) begin
             // CDAC Reset, CLK@Comparator Low
             COMP_CLK <= `LOW;
             SC <= `HIGH;
             SDAC <= `LOW;
-        end else if( state == 3`b002) begin
+        end else if( state == 3'd2) begin
             // Sc OFF(Vinn = Hi-Z)
-            SC = `LOW
-        end else if( state == 3`b003) begin
+            SC = `LOW;
+        end else if( state == 3'd3) begin
             // ref GEN.
             SDAC <= SDAC_NEXT;
-        end else if( state == 3`b004) begin
+        end else if( state == 3'd4) begin
             // CLK@Comparator High
-            COMP_CLK <= `HIGH
-        end else if( state == 3`b005) begin
+            COMP_CLK <= `HIGH;
+        end else if( state == 3'd5) begin
             DIGITAL_OUT <= COMP_OUT;
             SDAC_NEXT <= next_SDAC(COMP_OUT, ADCount, SDAC);
         end
-        //else if( state == 3`b006) begin
+        //else if( state == 3'd6) begin
         //end
     end
 
@@ -87,13 +87,14 @@ module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST, VDD, VSS)
         input [2:0] ADCount;
         input [`BIT_ADC:0] SDAC_now;
 
-        next_SDAC = SDAC_now;
         if ( ADCount == `BIT_ADC - 1 ) begin    // LSB A/D converting now
             next_SDAC = 1 << `BIT_ADC;          // only MSB is HIGH, meaning Vinn = Vref / 2
         end else if( COMP_OUT == 0 ) begin
+            next_SDAC = SDAC_now;
             next_SDAC[`BIT_ADC - ADCount] = 0;
             next_SDAC[`BIT_ADC - (ADCount + 1)] = 1;
         end else begin
+            next_SDAC = SDAC_now;
             next_SDAC[`BIT_ADC - (ADCount + 1)] = 1;
         end
 

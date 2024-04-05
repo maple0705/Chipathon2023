@@ -1,5 +1,6 @@
 `default_nettype none
 
+//`define USE_POWER_PINS
 `define HIGH 1'b1
 `define LOW 1'b0
 `define BIT_ADC 4'd8
@@ -8,34 +9,38 @@ module user_proj_sarlogic #(
     parameter BITS = 16
 )(
 `ifdef USE_POWER_PINS
-    inout vccd1,
-    inout vssd1,
+    //inout vccd1,
+    inout vdda1, // User area 1 3.3V supply
+    inout vssd1, // User area 1 digital ground
 `endif
     // Wishbone Slave ports (WB MI A)
     input wb_clk_i,
     input wb_rst_i,
 
     // IOs
-    input  [BITS-1:0] io_in,
-    output [BITS-1:0] io_out,
-    output [BITS-1:0] io_oeb
+    //input  [BITS-1:0] io_in,
+    //output [BITS-1:0] io_out,
+    //output [BITS-1:0] io_oeb
+    input COMP_OUT,
+    output DIGITAL_OUT, COMP_CLK, SC,
+    output [`BIT_ADC:0] SDAC
 );
 
     // IO
-    assign io_oeb[15:0] = 16'b0000_0000_0000_1111;
+    //sassign io_oeb[15:0] = 16'b0000_0000_0000_1111;
 
     SAR_LOGIC DUT(
-        .COMP_OUT (io_in[3]),      // 1bit input
-        .DIGITAL_OUT (io_out[15]),  // 1bit output
-        .COMP_CLK (io_out[14]),     // 1bit output
-        .SC (io_out[13]),           // 1bit output
-        .SDAC (io_out[12:4]),      // 9bit output
+        .COMP_OUT (COMP_OUT),      // 1bit input
+        .DIGITAL_OUT (DIGITAL_OUT),  // 1bit output
+        .COMP_CLK (COMP_CLK),     // 1bit output
+        .SC (SC),           // 1bit output
+        .SDAC (SDAC),      // 9bit output
         .CLK (wb_clk_i),            // 1bit input
-        .XRST (wb_rst_i),           // 1bit input
-        .VDD (1'b1),               // 1bit input
-        .VSS (1'b0)                // 1bit input
+        .XRST (wb_rst_i)           // 1bit input
+        //.vdda1 (vdda1),               // 1bit input
+        //.vssd1 (vssd1)                // 1bit input
     );
-    assign io_out[3:0] = 4'b0000;
+    //assign io_out[3:0] = 4'b0000;
 
 endmodule
 
@@ -53,9 +58,11 @@ endmodule
 // VDD : 電源電圧
 // VSS : GND
 //module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SD, S0, S1, S2, S3, S4, S5, S6, S7, CLK, XRST, VDD, VSS);
-module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST, VDD, VSS);
+//module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST, vdda1, vssd1);
+module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST);
     input COMP_OUT;
-    input CLK, XRST, VDD, VSS;
+    //input CLK, XRST, vdda1, vssd1;
+    input CLK, XRST;
     output DIGITAL_OUT, COMP_CLK, SC;
     output [`BIT_ADC:0] SDAC;
 
@@ -94,13 +101,13 @@ module SAR_LOGIC(COMP_OUT, DIGITAL_OUT, COMP_CLK, SC, SDAC, CLK, XRST, VDD, VSS)
             DIGITAL_OUT <= `LOW;
             COMP_CLK <= `LOW;
             SC <= `HIGH;
-            SDAC <= `LOW;
+            SDAC <= 0;
             SDAC_NEXT <= 1 << `BIT_ADC;  // only MSB is HIGH, meaning Vinn = Vref / 2
         end else if( state == 3'd1) begin
             // CDAC Reset, CLK@Comparator Low
             COMP_CLK <= `LOW;
             SC <= `HIGH;
-            SDAC <= `LOW;
+            SDAC <= 0;
         end else if( state == 3'd2) begin
             // Sc OFF(Vinn = Hi-Z)
             SC <= `LOW;

@@ -14,13 +14,14 @@ module user_proj_sarlogic #(
     inout vssd1, // User area 1 digital ground
 `endif
     // Wishbone Slave ports (WB MI A)
-    input wb_clk_i,
-    input wb_rst_i,
+    //input wb_clk_i,
+    //input wb_rst_i,
 
     // IOs
     //input  [BITS-1:0] io_in,
     //output [BITS-1:0] io_out,
     //output [BITS-1:0] io_oeb
+    input CLK, XRST,
     input COMP_OUT,
     output DIGITAL_OUT, COMP_CLK, SC,
     output [`BIT_ADC:0] SDAC
@@ -28,19 +29,19 @@ module user_proj_sarlogic #(
 
     // IO
     //sassign io_oeb[15:0] = 16'b0000_0000_0000_1111;
+    //assign io_out[3:0] = 4'b0000;
 
     SAR_LOGIC DUT(
-        .COMP_OUT (COMP_OUT),      // 1bit input
-        .DIGITAL_OUT (DIGITAL_OUT),  // 1bit output
-        .COMP_CLK (COMP_CLK),     // 1bit output
-        .SC (SC),           // 1bit output
-        .SDAC (SDAC),      // 9bit output
-        .CLK (wb_clk_i),            // 1bit input
-        .XRST (wb_rst_i)           // 1bit input
-        //.vdda1 (vdda1),               // 1bit input
-        //.vssd1 (vssd1)                // 1bit input
+        .COMP_OUT (COMP_OUT),       // 1bit input
+        .DIGITAL_OUT (DIGITAL_OUT), // 1bit output
+        .COMP_CLK (COMP_CLK),       // 1bit output
+        .SC (SC),                   // 1bit output
+        .SDAC (SDAC),               // 9bit output
+        .CLK (CLK),            // 1bit input
+        .XRST (XRST)            // 1bit input
+        //.vdda1 (vdda1),           // 1bit input
+        //.vssd1 (vssd1)            // 1bit input
     );
-    //assign io_out[3:0] = 4'b0000;
 
 endmodule
 

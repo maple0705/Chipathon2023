@@ -1,16 +1,15 @@
 `define HIGH 1'b1
 `define LOW 1'b0
-`define BIT_ADC 4'd8
+`define BIT_ADC 4'd6
 
 module SAR_LOGIC_tb;
     reg CLK = 1'b0;
     reg COMP_OUT = 1'b1;
     reg XRST = 1'b1;
-    reg VDD = 1'b1;
-    reg VSS = 1'b0;
-    wire DIGITAL_OUT;
+    wire [`BIT_ADC-1:0] DIGITAL_OUT;
     wire COMP_CLK;
     wire SC;
+    wire EOC;
     wire [`BIT_ADC:0] SDAC;
 
     initial begin
@@ -22,16 +21,15 @@ module SAR_LOGIC_tb;
         CLK <= ~CLK;
     end
 
-    SAR_LOGIC DUT (
-        .COMP_OUT (COMP_OUT), 
-        .DIGITAL_OUT (DIGITAL_OUT), 
-        .COMP_CLK (COMP_CLK), 
-        .SC (SC), 
-        .SDAC (SDAC), 
-        .CLK (CLK), 
-        .XRST (XRST), 
-        .VDD (VDD), 
-        .VSS (VSS)
+    SAR_LOGIC DUT(
+        .COMP_OUT (COMP_OUT),       // 1bit input
+        .DIGITAL_OUT (DIGITAL_OUT), // 1bit output
+        .COMP_CLK (COMP_CLK),       // 1bit output
+        .SC (SC),                   // 1bit output
+        .SDAC (SDAC),               // 9bit output
+        .EOC (EOC),                 // 1bit output
+        .CLK (CLK),                 // 1bit input
+        .XRST (XRST)                // 1bit input
     );
 
     initial begin

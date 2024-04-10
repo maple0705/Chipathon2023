@@ -5,3 +5,7 @@
 /transmission-gate
 /gitefu
 /inverter
+SAR_ADC/nfet.ext
+SAR_ADC/pfet$1.ext
+SAR_ADC/SW_CDAC.gds
+SAR_ADC/SW_CDAC_backup.gds

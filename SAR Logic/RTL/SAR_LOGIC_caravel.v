@@ -24,7 +24,7 @@ module user_proj_sarlogic #(
     input CLK, XRST,
     input COMP_OUT,
     output COMP_CLK, SC, EOC,
-    output [`BIT_ADC-1:0] DIGITAL_OUT;
+    output [`BIT_ADC-1:0] DIGITAL_OUT,
     output [`BIT_ADC:0] SDAC
 );
 
